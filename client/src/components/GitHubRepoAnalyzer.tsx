@@ -5,6 +5,7 @@ import { Github, ArrowRight, Loader2, Info } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { createApiUrl } from "@/config/api";
 
 interface GitHubRepoAnalyzerProps {
   onAnalysisComplete: (results: any) => void;
@@ -60,7 +61,7 @@ export default function GitHubRepoAnalyzer({ onAnalysisComplete }: GitHubRepoAna
     }, 1000);
 
     try {
-      const response = await fetch('/api/analyze-repo', {
+      const response = await fetch(createApiUrl('api/analyze-repo'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ owner: parsed.owner, repo: parsed.repo }),

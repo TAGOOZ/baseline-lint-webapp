@@ -2,8 +2,10 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { analyzeCode } from "./lib/baselineLint";
-import { getUncachableGitHubClient } from "./lib/githubClient";
+import { getBestGitHubClient, getUncachableGitHubClient } from "./lib/githubClient";
+import { getCurrentUser, isAuthenticated } from "./lib/auth";
 import { z } from "zod";
+import authRoutes from "./routes/auth";
 
 const analyzeRequestSchema = z.object({
   code: z.string(),
@@ -20,6 +22,10 @@ const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW = 60 * 1000;
 
 function checkRateLimit(key: string): boolean {
+  return checkRateLimitForUser(key, RATE_LIMIT_MAX);
+}
+
+function checkRateLimitForUser(key: string, maxRequests: number): boolean {
   const now = Date.now();
   const record = rateLimitMap.get(key);
 
@@ -28,7 +34,7 @@ function checkRateLimit(key: string): boolean {
     return true;
   }
 
-  if (record.count >= RATE_LIMIT_MAX) {
+  if (record.count >= maxRequests) {
     return false;
   }
 
@@ -37,6 +43,9 @@ function checkRateLimit(key: string): boolean {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Register authentication routes
+  app.use('/', authRoutes);
+
   app.post("/api/analyze", async (req, res) => {
     try {
       const { code, language } = analyzeRequestSchema.parse(req.body);
@@ -65,17 +74,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/analyze-repo", async (req, res) => {
     try {
       const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+      const user = getCurrentUser(req);
       
-      if (!checkRateLimit(clientIp)) {
+      // Apply different rate limits based on authentication status
+      const rateLimitKey = user ? `user:${user.id}` : `ip:${clientIp}`;
+      const rateLimitMax = user ? 20 : 5; // Authenticated users get higher limits
+      
+      if (!checkRateLimitForUser(rateLimitKey, rateLimitMax)) {
         res.status(429).json({ 
-          message: 'Rate limit exceeded. Please try again in a minute.' 
+          message: user 
+            ? 'Rate limit exceeded. Please try again in a minute.' 
+            : 'Rate limit exceeded. Please authenticate with GitHub for higher limits.'
         });
         return;
       }
 
       const { owner, repo } = analyzeRepoRequestSchema.parse(req.body);
       
-      const octokit = await getUncachableGitHubClient();
+      // Use user's GitHub token if available, otherwise fall back to system token
+      const octokit = await getBestGitHubClient(user?.id);
       
       const { data: repoData } = await octokit.repos.get({ owner, repo });
       const defaultBranch = repoData.default_branch;

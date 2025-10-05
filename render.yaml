@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: baseline-lint-api
+    env: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      # CRITICAL: Set these in Render dashboard
+      - key: SESSION_SECRET
+        value: "CHANGE_THIS_TO_SECURE_32_CHAR_SECRET"
+      - key: ENCRYPTION_KEY
+        value: "CHANGE_THIS_TO_SECURE_32_CHAR_KEY"
+      - key: GITHUB_CLIENT_ID
+        value: "your-github-oauth-client-id"
+      - key: GITHUB_CLIENT_SECRET
+        value: "your-github-oauth-client-secret"
+      - key: GITHUB_CALLBACK_URL
+        value: "https://your-app-name.onrender.com/auth/github/callback"

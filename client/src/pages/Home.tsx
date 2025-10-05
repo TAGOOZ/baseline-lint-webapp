@@ -7,7 +7,9 @@ import GitHubRepoAnalyzer from "@/components/GitHubRepoAnalyzer";
 import RepoResultsPanel from "@/components/RepoResultsPanel";
 import ExamplesSection from "@/components/ExamplesSection";
 import Footer from "@/components/Footer";
+import AuthStatus from "@/components/AuthStatus";
 import { useToast } from "@/hooks/use-toast";
+import { createApiUrl } from "@/config/api";
 
 export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -23,7 +25,7 @@ export default function Home() {
     setCurrentLanguage(language);
     
     try {
-      const response = await fetch('/api/analyze', {
+      const response = await fetch(createApiUrl('api/analyze'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,6 +103,7 @@ export default function Home() {
         <HeroSection />
         
         <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-8">
+          <AuthStatus />
           <GitHubRepoAnalyzer onAnalysisComplete={handleRepoAnalysisComplete} />
           
           <div id="repo-results-section">

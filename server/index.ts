@@ -1,10 +1,56 @@
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session";
+import passport from "passport";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { setupPassport, getSessionConfig } from "./lib/auth";
+import { 
+  validateEnvironment,
+  getHelmetConfig,
+  getRateLimitConfig,
+  getStrictRateLimitConfig,
+  getCSRFProtection,
+  requestSizeLimits,
+  securityHeaders,
+  sanitizeInput,
+  securityMonitoring
+} from "./lib/security";
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
+// Validate environment variables first
+try {
+  validateEnvironment();
+} catch (error) {
+  console.error('Environment validation failed:', error);
+  process.exit(1);
+}
+
+// Security middleware (order matters!)
+app.use(securityHeaders);
+app.use(securityMonitoring);
+app.use(getHelmetConfig());
+app.use(requestSizeLimits());
+
+// Rate limiting
+app.use(getRateLimitConfig());
+
+// Initialize authentication
+setupPassport();
+
+// Session middleware
+app.use(session(getSessionConfig()));
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Body parsing with size limits
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
+
+// Input sanitization
+app.use(sanitizeInput);
 
 app.use((req, res, next) => {
   const start = Date.now();

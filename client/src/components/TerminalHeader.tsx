@@ -1,5 +1,6 @@
 import { Terminal, Github, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AuthButton from "./AuthButton";
 
 export default function TerminalHeader() {
   return (
@@ -49,6 +50,7 @@ export default function TerminalHeader() {
                 <span className="hidden sm:inline">GitHub</span>
               </a>
             </Button>
+            <AuthButton />
           </div>
         </div>
       </div>
