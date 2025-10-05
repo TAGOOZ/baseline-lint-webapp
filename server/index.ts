@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import passport from "passport";
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { setupPassport, getSessionConfig } from "./lib/auth";
@@ -25,6 +26,19 @@ try {
   console.error('Environment validation failed:', error);
   process.exit(1);
 }
+
+// CORS configuration
+app.use(cors({
+  origin: [
+    'http://localhost:5173', // Vite dev server
+    'http://localhost:3000', // Alternative dev port
+    'https://base-lint.netlify.app', // Netlify frontend
+    'https://*.netlify.app' // All Netlify subdomains
+  ],
+  credentials: true, // Allow cookies/auth headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 
 // Security middleware (order matters!)
 app.use(securityHeaders);
