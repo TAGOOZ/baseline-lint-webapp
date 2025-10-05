@@ -28,7 +28,11 @@ function convertBaselineLintIssues(baselineIssues: any[]): CompatibilityIssue[] 
       status = 'limited';
     }
 
-    let featureName = issue.api || issue.feature || issue.featureId || issue.name;
+    let featureName = issue.api || issue.property || issue.feature || issue.featureId || issue.name;
+    
+    if (featureName && issue.value) {
+      featureName = `${featureName}: ${issue.value}`;
+    }
     
     if (!featureName && issue.message) {
       const match = issue.message.match(/Feature:\s*([^\s]+)|['"`]([^'"`]+)['"`]/);
