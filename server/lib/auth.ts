@@ -104,8 +104,11 @@ export function setupPassport() {
         githubId: user.githubId
       });
 
-      // Return both user and token
-      return done(null, { user, token });
+      // Store token in user object for later access
+      (user as any).jwtToken = token;
+
+      // Return user (Passport will serialize this)
+      return done(null, user);
     } catch (error) {
       log(`Error in GitHub OAuth callback: ${error}`, 'auth');
       return done(error, null);

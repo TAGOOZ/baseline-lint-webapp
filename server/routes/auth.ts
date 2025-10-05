@@ -31,19 +31,18 @@ router.get('/auth/github/callback',
     failureRedirect: process.env.FRONTEND_URL + '/?error=auth_failed'
   }),
   (req, res) => {
-    log(`User ${(req.user as any)?.user?.username} logged in successfully`, 'auth');
-
-    const { user, token } = req.user as any;
-
-    if (!user || !token) {
-      log('OAuth callback missing user or token', 'auth');
+    const user = req.user as any;
+    
+    if (!user || !user.jwtToken) {
+      log('OAuth callback missing user or JWT token', 'auth');
       return res.redirect(process.env.FRONTEND_URL + '/?error=auth_failed');
     }
 
+    log(`User ${user.username} logged in successfully`, 'auth');
     logSecurityEvent('JWT_TOKEN_GENERATED', { userId: user.id, username: user.username }, req);
 
-    // Redirect with token in URL fragment for client-side storage
-    const redirectUrl = `${process.env.FRONTEND_URL}/?token=${token}&success=login`;
+    // Redirect with token in URL for client-side storage
+    const redirectUrl = `${process.env.FRONTEND_URL}/?token=${user.jwtToken}&success=login`;
     res.redirect(redirectUrl);
   }
 );
