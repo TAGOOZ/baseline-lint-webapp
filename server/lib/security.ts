@@ -55,11 +55,11 @@ export function getHelmetConfig() {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
         imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'", "https://api.github.com", "https://*.netlify.app"],
+        connectSrc: ["'self'", "https://api.github.com", "https://*.netlify.app", "https://cdn.jsdelivr.net"],
         frameSrc: ["'none'"],
         objectSrc: ["'none'"],
         upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
