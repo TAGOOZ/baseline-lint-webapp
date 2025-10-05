@@ -21,9 +21,7 @@ export function logSecurityEvent(event: string, details: any, req?: Request) {
 // Environment validation
 export function validateEnvironment() {
   const required = [
-    'SESSION_SECRET',
-    'GITHUB_CLIENT_ID', 
-    'GITHUB_CLIENT_SECRET'
+    'SESSION_SECRET'
   ];
   
   const missing = required.filter(key => !process.env[key]);
@@ -40,6 +38,14 @@ export function validateEnvironment() {
   
   if (sessionSecret === 'your-session-secret-change-in-production') {
     throw new Error('SESSION_SECRET must be changed from default value');
+  }
+  
+  // Check GitHub OAuth (optional for now)
+  const githubClientId = process.env.GITHUB_CLIENT_ID;
+  const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
+  
+  if (!githubClientId || !githubClientSecret) {
+    console.warn('GitHub OAuth not configured. Authentication will be disabled.');
   }
 }
 

@@ -43,16 +43,18 @@ export interface AuthenticatedUser {
 
 export function setupPassport() {
   // Validate required environment variables
-  if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
-    throw new Error('GitHub OAuth not configured. Set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment variables.');
-  }
-  
   if (!SESSION_SECRET) {
     throw new Error('SESSION_SECRET environment variable is required');
   }
   
   if (SESSION_SECRET.length < 32) {
     throw new Error('SESSION_SECRET must be at least 32 characters long');
+  }
+  
+  // GitHub OAuth is optional for now
+  if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
+    log('GitHub OAuth not configured. Authentication will be disabled.', 'auth');
+    return;
   }
 
   // GitHub OAuth Strategy
