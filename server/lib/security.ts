@@ -57,7 +57,7 @@ export function getHelmetConfig() {
         defaultSrc: ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
-        scriptSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
         imgSrc: ["'self'", "data:", "https:"],
         connectSrc: ["'self'", "https://api.github.com", "https://*.netlify.app"],
         frameSrc: ["'none'"],
@@ -74,7 +74,7 @@ export function getRateLimitConfig() {
   // General API rate limit
   return rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    max: 1000, // limit each IP to 1000 requests per windowMs (increased for development)
     message: {
       error: 'Too many requests from this IP, please try again later.',
       retryAfter: '15 minutes'
@@ -95,7 +95,7 @@ export function getRateLimitConfig() {
 export function getStrictRateLimitConfig() {
   return rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 10, // limit each IP to 10 requests per windowMs
+    max: 50, // limit each IP to 50 requests per windowMs (increased for development)
     message: {
       error: 'Too many authentication attempts, please try again later.',
       retryAfter: '15 minutes'
