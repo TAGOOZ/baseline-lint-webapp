@@ -6,7 +6,7 @@ const getApiBaseUrl = () => {
   }
   
   // In production, use the environment variable or fallback
-  return import.meta.env.VITE_API_BASE_URL || 'https://your-backend-url.railway.app';
+  return import.meta.env.VITE_API_BASE_URL || 'https://baseline-lint-webapp.onrender.com';
 };
 
 export const API_BASE_URL = getApiBaseUrl();

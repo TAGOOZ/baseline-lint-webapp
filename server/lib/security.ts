@@ -59,7 +59,7 @@ export function getHelmetConfig() {
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         scriptSrc: ["'self'"],
         imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'", "https://api.github.com"],
+        connectSrc: ["'self'", "https://api.github.com", "https://*.netlify.app"],
         frameSrc: ["'none'"],
         objectSrc: ["'none'"],
         upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
