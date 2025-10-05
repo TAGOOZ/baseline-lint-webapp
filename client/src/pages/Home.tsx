@@ -27,6 +27,7 @@ export default function Home() {
     try {
       const response = await fetch(createApiUrl('api/analyze'), {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },

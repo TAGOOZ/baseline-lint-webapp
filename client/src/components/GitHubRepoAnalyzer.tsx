@@ -63,6 +63,7 @@ export default function GitHubRepoAnalyzer({ onAnalysisComplete }: GitHubRepoAna
     try {
       const response = await fetch(createApiUrl('api/analyze-repo'), {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ owner: parsed.owner, repo: parsed.repo }),
       });
