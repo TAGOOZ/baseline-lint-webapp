@@ -23,3 +23,5 @@ services:
         value: "your-github-oauth-client-secret"
       - key: GITHUB_CALLBACK_URL
         value: "https://your-app-name.onrender.com/auth/github/callback"
+      - key: FRONTEND_URL
+        value: "https://base-lint.netlify.app"

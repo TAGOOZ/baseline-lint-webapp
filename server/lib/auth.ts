@@ -147,7 +147,8 @@ export function getSessionConfig() {
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: 'strict' as const
+      sameSite: 'none' as const, // Allow cross-domain cookies
+      domain: process.env.NODE_ENV === 'production' ? undefined : undefined // Let browser handle domain
     }
   };
 }

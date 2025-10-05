@@ -28,11 +28,11 @@ router.get('/auth/github', passport.authenticate('github', {
 // GitHub OAuth callback
 router.get('/auth/github/callback', 
   passport.authenticate('github', { 
-    failureRedirect: '/?error=auth_failed' 
+    failureRedirect: process.env.FRONTEND_URL + '/?error=auth_failed' 
   }),
   (req, res) => {
     log(`User ${(req.user as any)?.username} logged in successfully`, 'auth');
-    res.redirect('/?success=login');
+    res.redirect(process.env.FRONTEND_URL + '/?success=login');
   }
 );
 
