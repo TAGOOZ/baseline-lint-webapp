@@ -20,15 +20,15 @@ function convertBaselineLintIssues(baselineIssues: any[]): CompatibilityIssue[] 
   return baselineIssues.map((issue, index) => {
     let status: 'widely-available' | 'newly-available' | 'limited' = 'limited';
     
-    if (issue.severity === 'info') {
+    if (issue.baseline === 'high') {
       status = 'widely-available';
-    } else if (issue.severity === 'warning') {
+    } else if (issue.baseline === 'low') {
       status = 'newly-available';
-    } else if (issue.severity === 'error') {
+    } else {
       status = 'limited';
     }
 
-    let featureName = issue.feature || issue.featureId || issue.name;
+    let featureName = issue.api || issue.feature || issue.featureId || issue.name;
     
     if (!featureName && issue.message) {
       const match = issue.message.match(/Feature:\s*([^\s]+)|['"`]([^'"`]+)['"`]/);
@@ -68,7 +68,7 @@ export async function analyzeCode(code: string, language: string): Promise<Analy
 
     const issues = convertBaselineLintIssues(result.issues || []);
     
-    const score = result.score !== undefined ? result.score : calculateCompatibilityScore(issues);
+    const score = calculateCompatibilityScore(issues);
 
     return {
       score,
@@ -85,8 +85,8 @@ function calculateCompatibilityScore(issues: CompatibilityIssue[]): number {
 
   const weights = {
     'widely-available': 1.0,
-    'newly-available': 0.7,
-    'limited': 0.0,
+    'newly-available': 0.6,
+    'limited': 0.2,
   };
 
   const totalWeight = issues.reduce((sum, issue) => {
