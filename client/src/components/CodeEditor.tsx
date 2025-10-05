@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,9 +8,11 @@ import { useToast } from "@/hooks/use-toast";
 interface CodeEditorProps {
   onAnalyze: (code: string, language: string) => void;
   isAnalyzing: boolean;
+  externalCode?: string;
+  externalLanguage?: string;
 }
 
-export default function CodeEditor({ onAnalyze, isAnalyzing }: CodeEditorProps) {
+export default function CodeEditor({ onAnalyze, isAnalyzing, externalCode, externalLanguage }: CodeEditorProps) {
   const [cssCode, setCssCode] = useState(`/* Modern CSS Example */
 .container {
   display: grid;
@@ -51,6 +53,18 @@ console.log({ last, doubled, sorted, results, grouped });`);
 
   const [activeTab, setActiveTab] = useState("css");
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (externalCode && externalLanguage) {
+      if (externalLanguage === 'css') {
+        setCssCode(externalCode);
+        setActiveTab('css');
+      } else if (externalLanguage === 'js' || externalLanguage === 'javascript') {
+        setJsCode(externalCode);
+        setActiveTab('js');
+      }
+    }
+  }, [externalCode, externalLanguage]);
 
   const handleAnalyze = () => {
     const code = activeTab === "css" ? cssCode : jsCode;

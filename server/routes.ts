@@ -14,7 +14,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { code, language } = analyzeRequestSchema.parse(req.body);
       
-      const result = analyzeCode(code, language);
+      const result = await analyzeCode(code, language);
       
       res.json(result);
     } catch (error) {

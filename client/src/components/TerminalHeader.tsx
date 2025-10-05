@@ -1,4 +1,4 @@
-import { Terminal, Github } from "lucide-react";
+import { Terminal, Github, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function TerminalHeader() {
@@ -14,6 +14,22 @@ export default function TerminalHeader() {
           </div>
           
           <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              asChild
+              data-testid="link-npm"
+            >
+              <a 
+                href="https://www.npmjs.com/package/baseline-lint" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+              >
+                <Package className="w-4 h-4" />
+                <span className="hidden sm:inline">npm</span>
+              </a>
+            </Button>
             <Button 
               variant="outline" 
               size="sm" 

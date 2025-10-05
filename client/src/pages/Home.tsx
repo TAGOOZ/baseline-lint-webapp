@@ -87,7 +87,12 @@ export default function Home() {
         <HeroSection />
         
         <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-          <CodeEditor onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
+          <CodeEditor 
+            onAnalyze={handleAnalyze} 
+            isAnalyzing={isAnalyzing}
+            externalCode={currentCode}
+            externalLanguage={currentLanguage}
+          />
           
           <div id="results-section">
             {results && (
