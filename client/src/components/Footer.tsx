@@ -68,9 +68,7 @@ export default function Footer() {
               </Button>
               <Button variant="ghost" size="default" asChild data-testid="button-profile-email" className="min-h-[44px]">
                 <a 
-                  href="https://mail.google.com/mail/u/0/#inbox?compose=new"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="mailto:mostafatagedleen588@gmail.com"
                   className="flex items-center gap-2"
                 >
                   <Mail className="w-4 h-4" />
@@ -79,7 +77,7 @@ export default function Footer() {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground font-mono text-center px-4" data-testid="text-copyright">
-              <span className="text-primary">&gt;</span> baseline-lint v1.0.6
+              <span className="text-primary">&gt;</span> baseline-lint v1.0.7
               <span className="mx-2">•</span>
               Check browser compatibility instantly
             </p>
