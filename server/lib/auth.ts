@@ -144,11 +144,11 @@ export function getSessionConfig() {
     saveUninitialized: false,
     name: 'sessionId', // Custom session name
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
+      secure: true, // Always secure for cross-domain cookies
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       sameSite: 'none' as const, // Allow cross-domain cookies
-      domain: process.env.NODE_ENV === 'production' ? undefined : undefined // Let browser handle domain
+      // Don't set domain for cross-domain cookies
     }
   };
 }

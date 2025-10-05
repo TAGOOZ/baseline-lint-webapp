@@ -32,7 +32,17 @@ router.get('/auth/github/callback',
   }),
   (req, res) => {
     log(`User ${(req.user as any)?.username} logged in successfully`, 'auth');
-    res.redirect(process.env.FRONTEND_URL + '/?success=login');
+    
+    // Ensure session is saved before redirect
+    req.session.save((err) => {
+      if (err) {
+        log(`Session save error: ${err}`, 'auth');
+        return res.redirect(process.env.FRONTEND_URL + '/?error=session_error');
+      }
+      
+      log(`Session saved for user ${(req.user as any)?.username}`, 'auth');
+      res.redirect(process.env.FRONTEND_URL + '/?success=login');
+    });
   }
 );
 
