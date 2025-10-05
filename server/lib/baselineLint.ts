@@ -70,9 +70,11 @@ export async function analyzeCode(code: string, language: string): Promise<Analy
       throw new Error(`Unsupported language: ${language}`);
     }
 
-    const issues = convertBaselineLintIssues(result.issues || []);
+    const allIssues = convertBaselineLintIssues(result.issues || []);
     
-    const score = calculateCompatibilityScore(issues);
+    const issues = allIssues.filter(issue => issue.status !== 'widely-available');
+    
+    const score = calculateCompatibilityScore(allIssues);
 
     return {
       score,

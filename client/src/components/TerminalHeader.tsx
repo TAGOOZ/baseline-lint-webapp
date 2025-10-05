@@ -11,6 +11,9 @@ export default function TerminalHeader() {
             <h1 className="text-lg sm:text-xl font-bold text-foreground" data-testid="text-title">
               <span className="text-primary">&gt;</span> baseline-lint<span className="animate-pulse">_</span>
             </h1>
+            <span className="px-2 py-0.5 text-xs font-bold bg-primary/20 text-primary border border-primary/30 rounded" data-testid="badge-beta">
+              BETA
+            </span>
           </div>
           
           <div className="flex items-center gap-2">

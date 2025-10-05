@@ -30,7 +30,6 @@ export default function ResultsPanel({ score, issues, isVisible }: ResultsPanelP
   if (!isVisible) return null;
 
   const safeIssues = issues || [];
-  const widelyAvailable = safeIssues.filter(i => i.status === 'widely-available');
   const newlyAvailable = safeIssues.filter(i => i.status === 'newly-available');
   const limited = safeIssues.filter(i => i.status === 'limited');
 
@@ -85,14 +84,7 @@ export default function ResultsPanel({ score, issues, isVisible }: ResultsPanelP
           <Progress value={score} className="h-2" data-testid="progress-score" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 sm:p-6 border-b border-border bg-card">
-          <div className="text-center" data-testid="stat-widely-available">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <CheckCircle2 className="w-5 h-5 text-chart-1" />
-              <span className="text-2xl font-bold text-chart-1">{widelyAvailable.length}</span>
-            </div>
-            <p className="text-xs sm:text-sm text-muted-foreground font-mono">WIDELY AVAILABLE</p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 sm:p-6 border-b border-border bg-card">
           <div className="text-center" data-testid="stat-newly-available">
             <div className="flex items-center justify-center gap-2 mb-2">
               <AlertTriangle className="w-5 h-5 text-chart-2" />
@@ -159,7 +151,7 @@ export default function ResultsPanel({ score, issues, isVisible }: ResultsPanelP
             <div className="text-center py-8" data-testid="text-no-issues">
               <CheckCircle2 className="w-12 h-12 mx-auto mb-3 text-primary" />
               <p className="text-muted-foreground font-mono">
-                No compatibility issues found. All features are widely supported!
+                No compatibility concerns found. All features have good browser support!
               </p>
             </div>
           )}

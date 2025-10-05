@@ -98,7 +98,7 @@ export default function RepoResultsPanel({ results }: RepoResultsPanelProps) {
                 <div>
                   <h3 className="font-bold font-mono text-green-500 mb-1">All Clear!</h3>
                   <p className="text-sm text-muted-foreground font-mono">
-                    No compatibility issues found in the analyzed files.
+                    No compatibility concerns found in the analyzed files.
                   </p>
                 </div>
               </div>
