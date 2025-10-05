@@ -1,9 +1,9 @@
 [build]
   # Directory to change to before starting a build
-  base = "client"
+  base = "."
   
   # Directory that contains the deploy-ready HTML files and assets
-  publish = "dist/public"
+  publish = "client/dist/public"
   
   # Default build command
   command = "npm run build:client"
@@ -11,6 +11,8 @@
 [build.environment]
   # Node.js version
   NODE_VERSION = "18"
+  # Frontend environment variable
+  VITE_API_BASE_URL = "https://baseline-lint-webapp.onrender.com"
 
 # Redirect rules for SPA routing
 [[redirects]]
