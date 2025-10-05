@@ -68,7 +68,9 @@ export default function Footer() {
               </Button>
               <Button variant="ghost" size="default" asChild data-testid="button-profile-email" className="min-h-[44px]">
                 <a 
-                  href="mailto:mostafatageldeen588@gmail.com"
+                  href="https://mail.google.com/mail/u/0/#inbox?compose=new"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2"
                 >
                   <Mail className="w-4 h-4" />
