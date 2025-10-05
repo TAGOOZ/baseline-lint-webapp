@@ -8,6 +8,7 @@ interface Example {
   description: string;
   language: 'css' | 'js';
   code: string;
+  expectedScore?: string;
 }
 
 interface ExamplesSectionProps {
@@ -21,6 +22,7 @@ export default function ExamplesSection({ onLoadExample }: ExamplesSectionProps)
       title: 'React Hooks',
       description: 'Real code from React repository (useState, useEffect)',
       language: 'js',
+      expectedScore: '85-95',
       code: `// From facebook/react
 function useCounter(initialValue) {
   const [count, setCount] = useState(initialValue);
@@ -42,6 +44,7 @@ const data = await Promise.allSettled([
       title: 'Vue Reactivity',
       description: 'Real code from Vue.js repository',
       language: 'js',
+      expectedScore: '70-85',
       code: `// From vuejs/core
 const state = reactive({ count: 0 });
 
@@ -63,6 +66,7 @@ const first = await Promise.any([
       title: 'Lodash Methods',
       description: 'Real utility patterns from lodash library',
       language: 'js',
+      expectedScore: '75-90',
       code: `// From lodash/lodash
 function chunk(array, size) {
   const result = [];
@@ -81,6 +85,7 @@ const entries = Object.fromEntries([['a', 1], ['b', 2]]);`
       title: 'Modern CSS',
       description: 'Container queries, grid, and modern properties',
       language: 'css',
+      expectedScore: '60-80',
       code: `.container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -103,6 +108,7 @@ const entries = Object.fromEntries([['a', 1], ['b', 2]]);`
       title: 'CSS Pseudo-classes',
       description: 'Modern pseudo-class selectors (:has, :is, :where)',
       language: 'css',
+      expectedScore: '70-85',
       code: `.container:has(> .active) {
   background: var(--accent);
 }
@@ -120,6 +126,7 @@ const entries = Object.fromEntries([['a', 1], ['b', 2]]);`
       title: 'Edge Case: Empty',
       description: 'Testing empty code (should return 100 score)',
       language: 'js',
+      expectedScore: '100',
       code: ``
     },
     {
@@ -127,6 +134,7 @@ const entries = Object.fromEntries([['a', 1], ['b', 2]]);`
       title: 'Edge Case: Legacy',
       description: 'Old ES5 code (should score perfectly)',
       language: 'js',
+      expectedScore: '100',
       code: `var data = [1, 2, 3, 4, 5];
 var doubled = [];
 
@@ -141,6 +149,7 @@ console.log(doubled);`
       title: 'Edge Case: Bleeding',
       description: 'Newest features (should score lower)',
       language: 'js',
+      expectedScore: '40-60',
       code: `// Very new features
 const arr = [1, 2, 3, 4, 5];
 const sorted = arr.toSorted();
@@ -161,6 +170,7 @@ const results = await Promise.allSettled([
       title: 'Edge Case: Mixed',
       description: 'Mix of old and new (varied compatibility)',
       language: 'css',
+      expectedScore: '55-75',
       code: `/* Old widely supported */
 .box {
   display: flex;
@@ -209,14 +219,29 @@ const results = await Promise.allSettled([
               </span>
             </div>
             
-            <p className="text-sm text-muted-foreground mb-4 min-h-[2.5rem]" data-testid={`text-example-desc-${example.id}`}>
+            <p className="text-sm text-muted-foreground mb-2 min-h-[2.5rem]" data-testid={`text-example-desc-${example.id}`}>
               {example.description}
             </p>
             
+            {example.expectedScore && (
+              <div className="mb-4 flex items-center gap-2">
+                <span className="text-xs font-medium text-muted-foreground">Expected Score:</span>
+                <span className="text-xs px-2 py-1 bg-accent/20 text-accent-foreground rounded font-mono" data-testid={`badge-expected-score-${example.id}`}>
+                  {example.expectedScore}
+                </span>
+              </div>
+            )}
+            
             <pre className="text-xs bg-background/50 p-3 rounded border border-border overflow-x-auto mb-4 font-mono" data-testid={`code-preview-${example.id}`}>
               <code className="text-muted-foreground">
-                {example.code.split('\n').slice(0, 3).join('\n')}
-                {example.code.split('\n').length > 3 ? '\n...' : ''}
+                {example.code ? (
+                  <>
+                    {example.code.split('\n').slice(0, 3).join('\n')}
+                    {example.code.split('\n').length > 3 ? '\n...' : ''}
+                  </>
+                ) : (
+                  <span className="italic text-muted-foreground/60">[Empty code - no features to analyze]</span>
+                )}
               </code>
             </pre>
             

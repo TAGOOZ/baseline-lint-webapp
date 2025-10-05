@@ -28,9 +28,22 @@ function convertBaselineLintIssues(baselineIssues: any[]): CompatibilityIssue[] 
       status = 'limited';
     }
 
+    let featureName = issue.feature || issue.featureId || issue.name;
+    
+    if (!featureName && issue.message) {
+      const match = issue.message.match(/Feature:\s*([^\s]+)|['"`]([^'"`]+)['"`]/);
+      if (match) {
+        featureName = match[1] || match[2];
+      }
+    }
+    
+    if (!featureName) {
+      featureName = 'Unspecified feature';
+    }
+
     return {
       id: String(index),
-      feature: issue.feature || 'Unknown feature',
+      feature: featureName,
       status,
       line: issue.line,
       column: issue.column,
