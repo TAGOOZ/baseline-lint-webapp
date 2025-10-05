@@ -38,7 +38,7 @@ export default function HeroSection() {
       
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="mb-8">
-          <pre className="text-xs sm:text-sm md:text-base text-primary font-mono inline-block" data-testid="text-ascii-logo">
+          <pre className="hidden sm:inline-block text-xs md:text-sm lg:text-base text-primary font-mono" data-testid="text-ascii-logo">
 {`
 ██████   █████  ███████ ███████ ██      ██ ███    ██ ███████ 
 ██   ██ ██   ██ ██      ██      ██      ██ ████   ██ ██      
@@ -47,14 +47,19 @@ export default function HeroSection() {
 ██████  ██   ██ ███████ ███████ ███████ ██ ██   ████ ███████ 
 `}
           </pre>
+          <div className="sm:hidden">
+            <h1 className="text-3xl font-bold text-primary font-mono mb-2" data-testid="text-mobile-logo">
+              BASELINE
+            </h1>
+          </div>
         </div>
         
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-foreground" data-testid="text-subtitle">
+        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 text-foreground" data-testid="text-subtitle">
           LINT TERMINAL
         </h2>
         
-        <div className="h-8 mb-12">
-          <p className="text-sm sm:text-base md:text-lg text-muted-foreground font-mono" data-testid="text-tagline">
+        <div className="h-12 sm:h-8 mb-8 sm:mb-12">
+          <p className="text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground font-mono px-2" data-testid="text-tagline">
             <span className="text-primary">&gt;</span> {displayText}
             <span className="animate-pulse">|</span>
           </p>
@@ -63,7 +68,7 @@ export default function HeroSection() {
         <Button 
           size="lg" 
           onClick={scrollToEditor}
-          className="group relative overflow-visible"
+          className="group relative overflow-visible w-full sm:w-auto"
           data-testid="button-launch"
         >
           <span className="relative z-10">Launch Terminal</span>

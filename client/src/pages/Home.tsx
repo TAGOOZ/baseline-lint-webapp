@@ -86,7 +86,7 @@ export default function Home() {
         <TerminalHeader />
         <HeroSection />
         
-        <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+        <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
           <CodeEditor onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
           
           <div id="results-section">

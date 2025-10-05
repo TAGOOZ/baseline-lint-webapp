@@ -113,14 +113,15 @@ console.log({ last, doubled, sorted, results, grouped });`);
 
           <TabsContent value="css" className="m-0 p-0" data-testid="content-css">
             <Editor
-              height="400px"
+              height="300px"
+              className="sm:h-[400px]"
               language="css"
               value={cssCode}
               onChange={(value) => setCssCode(value || "")}
               theme="vs-dark"
               options={{
                 minimap: { enabled: false },
-                fontSize: 14,
+                fontSize: 13,
                 lineNumbers: "on",
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
@@ -132,14 +133,15 @@ console.log({ last, doubled, sorted, results, grouped });`);
 
           <TabsContent value="js" className="m-0 p-0" data-testid="content-javascript">
             <Editor
-              height="400px"
+              height="300px"
+              className="sm:h-[400px]"
               language="javascript"
               value={jsCode}
               onChange={(value) => setJsCode(value || "")}
               theme="vs-dark"
               options={{
                 minimap: { enabled: false },
-                fontSize: 14,
+                fontSize: 13,
                 lineNumbers: "on",
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
@@ -150,37 +152,39 @@ console.log({ last, doubled, sorted, results, grouped });`);
           </TabsContent>
         </Tabs>
 
-        <div className="flex items-center gap-2 px-4 py-3 bg-muted/30 border-t border-border">
-          <Button 
-            onClick={handleAnalyze}
-            disabled={isAnalyzing}
-            className="gap-2"
-            data-testid="button-analyze"
-          >
-            <Play className="w-4 h-4" />
-            {isAnalyzing ? "Analyzing..." : "Check Compatibility"}
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={handleClear}
-            className="gap-2"
-            data-testid="button-clear"
-          >
-            <Trash2 className="w-4 h-4" />
-            Clear
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={handleCopy}
-            className="gap-2"
-            data-testid="button-copy"
-          >
-            <Copy className="w-4 h-4" />
-            Copy
-          </Button>
-          <div className="ml-auto flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 px-4 py-3 bg-muted/30 border-t border-border">
+          <div className="flex gap-2 flex-wrap">
+            <Button 
+              onClick={handleAnalyze}
+              disabled={isAnalyzing}
+              className="gap-2 flex-1 sm:flex-none min-h-[44px]"
+              data-testid="button-analyze"
+            >
+              <Play className="w-4 h-4" />
+              <span>{isAnalyzing ? "Analyzing..." : "Check"}</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={handleClear}
+              className="gap-2 flex-1 sm:flex-none min-h-[44px]"
+              data-testid="button-clear"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Clear</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={handleCopy}
+              className="gap-2 flex-1 sm:flex-none min-h-[44px]"
+              data-testid="button-copy"
+            >
+              <Copy className="w-4 h-4" />
+              <span>Copy</span>
+            </Button>
+          </div>
+          <div className="sm:ml-auto flex items-center justify-center gap-2">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" data-testid="status-indicator"></div>
-            <span className="text-xs text-muted-foreground font-mono" data-testid="text-status">
+            <span className="text-xs sm:text-sm text-muted-foreground font-mono" data-testid="text-status">
               {isAnalyzing ? "Analyzing..." : "Ready"}
             </span>
           </div>

@@ -180,31 +180,31 @@ const results = await Promise.allSettled([
   ];
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-foreground mb-4" data-testid="text-examples-title">
+    <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div className="text-center mb-8 sm:mb-12">
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3 sm:mb-4" data-testid="text-examples-title">
           <span className="text-primary">&gt;</span> Code Examples
         </h2>
-        <p className="text-muted-foreground font-mono text-sm" data-testid="text-examples-subtitle">
+        <p className="text-muted-foreground font-mono text-xs sm:text-sm px-4" data-testid="text-examples-subtitle">
           Click to load and analyze example code snippets
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {examples.map((example) => (
           <Card 
             key={example.id} 
-            className="p-6 hover-elevate transition-all duration-200 relative overflow-visible"
+            className="p-4 sm:p-6 hover-elevate transition-all duration-200 relative overflow-visible"
             data-testid={`card-example-${example.id}`}
           >
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Code2 className="w-5 h-5 text-primary" />
-                <h3 className="font-semibold text-foreground" data-testid={`text-example-title-${example.id}`}>
+            <div className="flex items-start justify-between gap-2 mb-3">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <Code2 className="w-5 h-5 text-primary flex-shrink-0" />
+                <h3 className="font-semibold text-sm sm:text-base text-foreground" data-testid={`text-example-title-${example.id}`}>
                   {example.title}
                 </h3>
               </div>
-              <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded font-mono" data-testid={`badge-language-${example.id}`}>
+              <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded font-mono whitespace-nowrap flex-shrink-0" data-testid={`badge-language-${example.id}`}>
                 {example.language.toUpperCase()}
               </span>
             </div>
@@ -222,8 +222,8 @@ const results = await Promise.allSettled([
             
             <Button 
               variant="outline" 
-              size="sm" 
-              className="w-full"
+              size="default" 
+              className="w-full min-h-[44px]"
               onClick={() => {
                 console.log('Loading example:', example.title);
                 onLoadExample(example.code, example.language);
