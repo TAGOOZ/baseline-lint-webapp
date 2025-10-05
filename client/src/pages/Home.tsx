@@ -3,6 +3,8 @@ import TerminalHeader from "@/components/TerminalHeader";
 import HeroSection from "@/components/HeroSection";
 import CodeEditor from "@/components/CodeEditor";
 import ResultsPanel from "@/components/ResultsPanel";
+import GitHubRepoAnalyzer from "@/components/GitHubRepoAnalyzer";
+import RepoResultsPanel from "@/components/RepoResultsPanel";
 import ExamplesSection from "@/components/ExamplesSection";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
@@ -10,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState<{ score: number; issues: any[] } | null>(null);
+  const [repoResults, setRepoResults] = useState<any>(null);
   const [currentCode, setCurrentCode] = useState("");
   const [currentLanguage, setCurrentLanguage] = useState<string>("css");
   const { toast } = useToast();
@@ -73,6 +76,17 @@ export default function Home() {
     });
   };
 
+  const handleRepoAnalysisComplete = (results: any) => {
+    setRepoResults(results);
+    
+    const repoResultsSection = document.getElementById('repo-results-section');
+    if (repoResultsSection) {
+      setTimeout(() => {
+        repoResultsSection.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground relative">
       <div 
@@ -86,13 +100,23 @@ export default function Home() {
         <TerminalHeader />
         <HeroSection />
         
-        <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-          <CodeEditor 
-            onAnalyze={handleAnalyze} 
-            isAnalyzing={isAnalyzing}
-            externalCode={currentCode}
-            externalLanguage={currentLanguage}
-          />
+        <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-8">
+          <GitHubRepoAnalyzer onAnalysisComplete={handleRepoAnalysisComplete} />
+          
+          <div id="repo-results-section">
+            {repoResults && (
+              <RepoResultsPanel results={repoResults} />
+            )}
+          </div>
+
+          <div id="editor-section">
+            <CodeEditor 
+              onAnalyze={handleAnalyze} 
+              isAnalyzing={isAnalyzing}
+              externalCode={currentCode}
+              externalLanguage={currentLanguage}
+            />
+          </div>
           
           <div id="results-section">
             {results && (
