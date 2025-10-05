@@ -58,7 +58,7 @@ export function validateEnvironment() {
     throw new Error('JWT_SECRET must be at least 32 characters long');
   }
 
-  if (jwtSecret === 'your-jwt-secret-32-chars-minimum') {
+  if (jwtSecret === 'your-jwt-secret-32-chars-minimum' || jwtSecret === 'CHANGE_THIS_TO_SECURE_32_CHAR_JWT_SECRET') {
     throw new Error('JWT_SECRET must be changed from default value');
   }
 
