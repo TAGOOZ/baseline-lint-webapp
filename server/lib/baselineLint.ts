@@ -1,8 +1,12 @@
 import * as cssTree from 'css-tree';
 import { parse as babelParse } from '@babel/parser';
-import traverse from '@babel/traverse';
+import _traverse from '@babel/traverse';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 const { features } = require('web-features');
 const { computeBaseline } = require('compute-baseline');
+const traverse = _traverse.default || _traverse;
 
 interface CompatibilityIssue {
   id: string;
@@ -52,15 +56,25 @@ function analyzeCSSCode(code: string): CompatibilityIssue[] {
         const property = node.property;
         const value = cssTree.generate(node.value);
         
-        const featureMappings: Record<string, string> = {
-          'container-type': 'container-queries',
-          'container-name': 'container-queries',
-          'display': value.includes('grid') ? 'grid' : value.includes('flex') ? 'flexbox' : '',
-          'gap': 'gap',
-          'word-break': value.includes('auto-phrase') ? 'word-break-auto-phrase' : '',
-        };
+        let featureId: string | null = null;
+        let featureName = `${property}: ${value}`;
+        
+        if (property === 'container-type' || property === 'container-name') {
+          featureId = 'container-queries';
+        } else if (property === 'display' && value.includes('grid')) {
+          featureId = 'grid';
+        } else if (property === 'display' && value.includes('flex')) {
+          featureId = 'flexbox';
+        } else if (property === 'gap') {
+          featureId = 'gap';
+        } else if (property === 'word-break' && value.includes('auto-phrase')) {
+          featureId = 'word-break-auto-phrase';
+        } else if (property === 'aspect-ratio') {
+          featureId = 'aspect-ratio';
+        } else if (property === 'color-scheme') {
+          featureId = 'color-scheme';
+        }
 
-        const featureId = featureMappings[property];
         if (featureId) {
           const baselineInfo = getBaselineStatus(featureId);
           if (baselineInfo) {
@@ -78,7 +92,7 @@ function analyzeCSSCode(code: string): CompatibilityIssue[] {
 
             issues.push({
               id: String(issueId++),
-              feature: `${property}: ${value}`,
+              feature: featureName,
               status: baselineInfo.status as any,
               line: node.loc?.start.line,
               column: node.loc?.start.column,
@@ -103,7 +117,7 @@ function analyzeCSSCode(code: string): CompatibilityIssue[] {
 
         const featureId = featureMap[pseudoClass];
         if (featureId) {
-          const baselineInfo = getBaselineStatus(`:${featureId}`);
+          const baselineInfo = getBaselineStatus(featureId);
           if (baselineInfo) {
             issues.push({
               id: String(issueId++),
