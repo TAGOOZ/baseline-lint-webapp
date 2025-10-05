@@ -5,6 +5,7 @@ import { Github, ArrowRight, Loader2, Info } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { createApiUrl } from "@/config/api";
 
 interface GitHubRepoAnalyzerProps {
@@ -25,6 +26,19 @@ export default function GitHubRepoAnalyzer({ onAnalysisComplete }: GitHubRepoAna
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [progress, setProgress] = useState<{ filesProcessed: number; totalFiles: number; timeElapsed: number } | null>(null);
   const { toast } = useToast();
+  const { token } = useAuth();
+
+  const getAuthHeaders = () => {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return headers;
+  };
 
   const parseGitHubUrl = (url: string): { owner: string; repo: string } | null => {
     const patterns = [
@@ -63,8 +77,7 @@ export default function GitHubRepoAnalyzer({ onAnalysisComplete }: GitHubRepoAna
     try {
       const response = await fetch(createApiUrl('api/analyze-repo'), {
         method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ owner: parsed.owner, repo: parsed.repo }),
       });
 

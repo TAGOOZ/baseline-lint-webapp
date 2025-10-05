@@ -21,29 +21,51 @@ export function logSecurityEvent(event: string, details: any, req?: Request) {
 // Environment validation
 export function validateEnvironment() {
   const required = [
-    'SESSION_SECRET'
+    'SESSION_SECRET',
+    'ENCRYPTION_KEY',
+    'JWT_SECRET'
   ];
-  
+
   const missing = required.filter(key => !process.env[key]);
-  
+
   if (missing.length > 0) {
     throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
   }
-  
+
   // Validate session secret strength
   const sessionSecret = process.env.SESSION_SECRET!;
   if (sessionSecret.length < 32) {
     throw new Error('SESSION_SECRET must be at least 32 characters long');
   }
-  
+
   if (sessionSecret === 'your-session-secret-change-in-production') {
     throw new Error('SESSION_SECRET must be changed from default value');
   }
-  
+
+  // Validate encryption key
+  const encryptionKey = process.env.ENCRYPTION_KEY!;
+  if (encryptionKey.length < 32) {
+    throw new Error('ENCRYPTION_KEY must be at least 32 characters long');
+  }
+
+  if (encryptionKey === 'your-encryption-key-32-chars-minimum') {
+    throw new Error('ENCRYPTION_KEY must be changed from default value');
+  }
+
+  // Validate JWT secret
+  const jwtSecret = process.env.JWT_SECRET!;
+  if (jwtSecret.length < 32) {
+    throw new Error('JWT_SECRET must be at least 32 characters long');
+  }
+
+  if (jwtSecret === 'your-jwt-secret-32-chars-minimum') {
+    throw new Error('JWT_SECRET must be changed from default value');
+  }
+
   // Check GitHub OAuth (optional for now)
   const githubClientId = process.env.GITHUB_CLIENT_ID;
   const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
-  
+
   if (!githubClientId || !githubClientSecret) {
     console.warn('GitHub OAuth not configured. Authentication will be disabled.');
   }

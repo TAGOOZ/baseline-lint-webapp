@@ -25,24 +25,26 @@ router.get('/auth/github', passport.authenticate('github', {
   scope: ['read:user', 'repo']
 }));
 
-// GitHub OAuth callback
-router.get('/auth/github/callback', 
-  passport.authenticate('github', { 
-    failureRedirect: process.env.FRONTEND_URL + '/?error=auth_failed' 
+// GitHub OAuth callback - Return JWT token instead of using sessions
+router.get('/auth/github/callback',
+  passport.authenticate('github', {
+    failureRedirect: process.env.FRONTEND_URL + '/?error=auth_failed'
   }),
   (req, res) => {
-    log(`User ${(req.user as any)?.username} logged in successfully`, 'auth');
-    
-    // Ensure session is saved before redirect
-    req.session.save((err) => {
-      if (err) {
-        log(`Session save error: ${err}`, 'auth');
-        return res.redirect(process.env.FRONTEND_URL + '/?error=session_error');
-      }
-      
-      log(`Session saved for user ${(req.user as any)?.username}`, 'auth');
-      res.redirect(process.env.FRONTEND_URL + '/?success=login');
-    });
+    log(`User ${(req.user as any)?.user?.username} logged in successfully`, 'auth');
+
+    const { user, token } = req.user as any;
+
+    if (!user || !token) {
+      log('OAuth callback missing user or token', 'auth');
+      return res.redirect(process.env.FRONTEND_URL + '/?error=auth_failed');
+    }
+
+    logSecurityEvent('JWT_TOKEN_GENERATED', { userId: user.id, username: user.username }, req);
+
+    // Redirect with token in URL fragment for client-side storage
+    const redirectUrl = `${process.env.FRONTEND_URL}/?token=${token}&success=login`;
+    res.redirect(redirectUrl);
   }
 );
 

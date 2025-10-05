@@ -75,22 +75,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
       const user = getCurrentUser(req);
-      
+
       // Apply different rate limits based on authentication status
       const rateLimitKey = user ? `user:${user.id}` : `ip:${clientIp}`;
       const rateLimitMax = user ? 20 : 5; // Authenticated users get higher limits
-      
+
       if (!checkRateLimitForUser(rateLimitKey, rateLimitMax)) {
-        res.status(429).json({ 
-          message: user 
-            ? 'Rate limit exceeded. Please try again in a minute.' 
+        res.status(429).json({
+          message: user
+            ? 'Rate limit exceeded. Please try again in a minute.'
             : 'Rate limit exceeded. Please authenticate with GitHub for higher limits.'
         });
         return;
       }
 
       const { owner, repo } = analyzeRepoRequestSchema.parse(req.body);
-      
+
       // Use user's GitHub token if available, otherwise fall back to system token
       const octokit = await getBestGitHubClient(user?.id);
       

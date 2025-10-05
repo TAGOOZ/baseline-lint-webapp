@@ -3,6 +3,7 @@ import { Strategy as GitHubStrategy } from 'passport-github2';
 import { storage } from '../storage';
 import { encrypt, decrypt } from './encryption';
 import { logSecurityEvent } from './security';
+import { generateToken, verifyToken, extractTokenFromHeader } from './jwt';
 
 // Simple logging function
 function log(message: string, source = "auth") {
@@ -88,7 +89,7 @@ export function setupPassport() {
         avatarUrl: githubUser.avatarUrl || null,
         accessToken: encryptedToken
       });
-      
+
       // Log successful authentication
       logSecurityEvent('USER_AUTHENTICATED', {
         userId: user.id,
@@ -96,7 +97,15 @@ export function setupPassport() {
         githubId: githubUser.id
       });
 
-      return done(null, user);
+      // Generate JWT token for the user
+      const token = generateToken({
+        userId: user.id,
+        username: user.username,
+        githubId: user.githubId
+      });
+
+      // Return both user and token
+      return done(null, { user, token });
     } catch (error) {
       log(`Error in GitHub OAuth callback: ${error}`, 'auth');
       return done(error, null);
@@ -153,20 +162,63 @@ export function getSessionConfig() {
   };
 }
 
-export function isAuthenticated(req: any, res: any, next: any) {
-  if (req.isAuthenticated()) {
-    return next();
+// JWT authentication middleware
+export function authenticateToken(req: any, res: any, next: any) {
+  const authHeader = req.headers.authorization;
+  const token = extractTokenFromHeader(authHeader);
+
+  if (!token) {
+    return res.status(401).json({ error: 'Access token required' });
   }
-  
-  res.status(401).json({ 
-    message: 'Authentication required',
-    requiresAuth: true 
-  });
+
+  const payload = verifyToken(token);
+  if (!payload) {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
+
+  // Add user info to request for backward compatibility
+  req.user = {
+    id: payload.userId,
+    username: payload.username,
+    githubId: payload.githubId,
+    isAuthenticated: true
+  };
+
+  next();
+}
+
+export function isAuthenticated(req: any, res: any, next: any) {
+  const authHeader = req.headers.authorization;
+  const token = extractTokenFromHeader(authHeader);
+
+  if (!token || !verifyToken(token)) {
+    return res.status(401).json({
+      message: 'Authentication required',
+      requiresAuth: true,
+      error: 'No valid token provided'
+    });
+  }
+
+  next();
 }
 
 export function getCurrentUser(req: any): AuthenticatedUser | null {
-  if (req.isAuthenticated()) {
-    return req.user;
+  const authHeader = req.headers.authorization;
+  const token = extractTokenFromHeader(authHeader);
+
+  if (token) {
+    const payload = verifyToken(token);
+    if (payload) {
+      return {
+        id: payload.userId,
+        username: payload.username,
+        displayName: payload.username, // We'll need to fetch this from DB if needed
+        profileUrl: '', // We'll need to fetch this from DB if needed
+        avatarUrl: '', // We'll need to fetch this from DB if needed
+        isAuthenticated: true
+      };
+    }
   }
+
   return null;
 }

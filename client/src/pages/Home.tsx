@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TerminalHeader from "@/components/TerminalHeader";
 import HeroSection from "@/components/HeroSection";
 import CodeEditor from "@/components/CodeEditor";
@@ -9,6 +9,7 @@ import ExamplesSection from "@/components/ExamplesSection";
 import Footer from "@/components/Footer";
 import AuthStatus from "@/components/AuthStatus";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { createApiUrl } from "@/config/api";
 
 export default function Home() {
@@ -18,19 +19,41 @@ export default function Home() {
   const [currentCode, setCurrentCode] = useState("");
   const [currentLanguage, setCurrentLanguage] = useState<string>("css");
   const { toast } = useToast();
+  const { token, login } = useAuth();
+
+  // Handle JWT token from URL parameters (OAuth callback)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get('token');
+
+    if (tokenFromUrl) {
+      // Store token and clean URL
+      login(tokenFromUrl);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [login]);
+
+  const getAuthHeaders = () => {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return headers;
+  };
 
   const handleAnalyze = async (code: string, language: string) => {
     setIsAnalyzing(true);
     setCurrentCode(code);
     setCurrentLanguage(language);
-    
+
     try {
       const response = await fetch(createApiUrl('api/analyze'), {
         method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ code, language }),
       });
 

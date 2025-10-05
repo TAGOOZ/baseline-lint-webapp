@@ -17,47 +17,112 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  token: string | null;
 }
 
 export default function AuthStatus() {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     isAuthenticated: false,
-    isLoading: true
+    isLoading: true,
+    token: null
   });
 
   useEffect(() => {
-    checkAuthStatus();
+    // Check for token in URL parameters (OAuth callback)
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get('token');
+
+    if (tokenFromUrl) {
+      // Store token and clean URL
+      localStorage.setItem('authToken', tokenFromUrl);
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      // Decode token to get user info
+      try {
+        const payload = JSON.parse(atob(tokenFromUrl.split('.')[1]));
+        setAuthState({
+          user: {
+            id: payload.userId,
+            username: payload.username,
+            displayName: payload.username,
+            profileUrl: '',
+            avatarUrl: '',
+            isAuthenticated: true
+          },
+          isAuthenticated: true,
+          isLoading: false,
+          token: tokenFromUrl
+        });
+      } catch (error) {
+        console.error('Invalid token format:', error);
+        localStorage.removeItem('authToken');
+        checkAuthStatus();
+      }
+    } else {
+      checkAuthStatus();
+    }
   }, []);
 
   const checkAuthStatus = async () => {
-    try {
-      const response = await fetch(createApiUrl('auth/status'), {
-        credentials: 'include'
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+      setAuthState({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        token: null
       });
-      
+      return;
+    }
+
+    try {
+      const response = await fetch(createApiUrl('auth/me'), {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
       if (response.ok) {
         const data = await response.json();
         setAuthState({
           user: data.user,
           isAuthenticated: data.isAuthenticated,
-          isLoading: false
+          isLoading: false,
+          token: token
         });
       } else {
+        // Token invalid or expired
+        localStorage.removeItem('authToken');
         setAuthState({
           user: null,
           isAuthenticated: false,
-          isLoading: false
+          isLoading: false,
+          token: null
         });
       }
     } catch (error) {
       console.error('Auth status check failed:', error);
+      localStorage.removeItem('authToken');
       setAuthState({
         user: null,
         isAuthenticated: false,
-        isLoading: false
+        isLoading: false,
+        token: null
       });
     }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('authToken');
+    setAuthState({
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      token: null
+    });
   };
 
   if (authState.isLoading) {
@@ -79,8 +144,8 @@ export default function AuthStatus() {
             <CheckCircle className="w-5 h-5 text-green-500" />
             <div>
               <div className="flex items-center gap-2">
-                <img 
-                  src={authState.user.avatarUrl} 
+                <img
+                  src={authState.user.avatarUrl}
                   alt={authState.user.displayName}
                   className="w-6 h-6 rounded-full"
                 />
@@ -93,9 +158,17 @@ export default function AuthStatus() {
               </p>
             </div>
           </div>
-          <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-            Authenticated
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+              Authenticated
+            </Badge>
+            <button
+              onClick={logout}
+              className="text-xs text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 underline"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </Card>
     );
