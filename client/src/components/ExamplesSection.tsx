@@ -17,6 +17,66 @@ interface ExamplesSectionProps {
 export default function ExamplesSection({ onLoadExample }: ExamplesSectionProps) {
   const examples: Example[] = [
     {
+      id: 'react-hooks',
+      title: 'React Hooks',
+      description: 'Real code from React repository (useState, useEffect)',
+      language: 'js',
+      code: `// From facebook/react
+function useCounter(initialValue) {
+  const [count, setCount] = useState(initialValue);
+  
+  const increment = () => setCount(c => c + 1);
+  const decrement = () => setCount(c => c - 1);
+  
+  return { count, increment, decrement };
+}
+
+// Promise.allSettled for concurrent fetches
+const data = await Promise.allSettled([
+  fetch('/api/users'),
+  fetch('/api/posts')
+]);`
+    },
+    {
+      id: 'vue-reactivity',
+      title: 'Vue Reactivity',
+      description: 'Real code from Vue.js repository',
+      language: 'js',
+      code: `// From vuejs/core
+const state = reactive({ count: 0 });
+
+// Object.hasOwn usage
+const hasProperty = Object.hasOwn(state, 'count');
+
+// Array.at for negative indexing
+const items = ['a', 'b', 'c'];
+const lastItem = items.at(-1);
+
+// Promise.any for race conditions
+const first = await Promise.any([
+  fetch('/api/v1'),
+  fetch('/api/v2')
+]);`
+    },
+    {
+      id: 'lodash-array',
+      title: 'Lodash Methods',
+      description: 'Real utility patterns from lodash library',
+      language: 'js',
+      code: `// From lodash/lodash
+function chunk(array, size) {
+  const result = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
+}
+
+// Modern alternatives
+const groups = Object.groupBy([1,2,3,4], n => n % 2);
+const entries = Object.fromEntries([['a', 1], ['b', 2]]);`
+    },
+    {
       id: 'modern-css',
       title: 'Modern CSS',
       description: 'Container queries, grid, and modern properties',
@@ -39,65 +99,9 @@ export default function ExamplesSection({ onLoadExample }: ExamplesSectionProps)
 }`
     },
     {
-      id: 'flexbox',
-      title: 'Flexbox Layout',
-      description: 'Widely supported flexbox properties',
-      language: 'css',
-      code: `.flex-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.flex-item {
-  flex: 1 1 300px;
-  padding: 1rem;
-}`
-    },
-    {
-      id: 'es6-features',
-      title: 'ES6+ Features',
-      description: 'Modern JavaScript array and promise methods',
-      language: 'js',
-      code: `const data = [1, 2, 3, 4, 5];
-
-// Array methods
-const last = data.at(-1);
-const doubled = data.map(x => x * 2);
-const sorted = data.toSorted((a, b) => b - a);
-
-// Promise handling
-const results = await Promise.allSettled([
-  fetch('/api/users'),
-  fetch('/api/posts')
-]);
-
-console.log({ last, doubled, sorted });`
-    },
-    {
-      id: 'object-methods',
-      title: 'Object Methods',
-      description: 'Modern object manipulation APIs',
-      language: 'js',
-      code: `const data = { a: 1, b: 2, c: 3 };
-
-// Object methods
-const entries = Object.entries(data);
-const hasOwn = Object.hasOwn(data, 'a');
-const grouped = Object.groupBy([1,2,3,4], n => n % 2 ? 'odd' : 'even');
-
-// New methods
-const frozen = Object.freeze({ ...data });
-const result = Object.fromEntries(entries);
-
-console.log({ hasOwn, grouped, result });`
-    },
-    {
       id: 'css-pseudo',
       title: 'CSS Pseudo-classes',
-      description: 'Modern pseudo-class selectors',
+      description: 'Modern pseudo-class selectors (:has, :is, :where)',
       language: 'css',
       code: `.container:has(> .active) {
   background: var(--accent);
@@ -112,25 +116,66 @@ console.log({ hasOwn, grouped, result });`
 }`
     },
     {
-      id: 'web-apis',
-      title: 'Web APIs',
-      description: 'Browser APIs and modern features',
+      id: 'edge-case-empty',
+      title: 'Edge Case: Empty',
+      description: 'Testing empty code (should return 100 score)',
       language: 'js',
-      code: `// Performance API
-const perfEntry = performance.now();
+      code: ``
+    },
+    {
+      id: 'edge-case-legacy',
+      title: 'Edge Case: Legacy',
+      description: 'Old ES5 code (should score perfectly)',
+      language: 'js',
+      code: `var data = [1, 2, 3, 4, 5];
+var doubled = [];
 
-// Crypto API
-const uuid = crypto.randomUUID();
+for (var i = 0; i < data.length; i++) {
+  doubled.push(data[i] * 2);
+}
 
-// Navigator API
-const online = navigator.onLine;
-const lang = navigator.language;
+console.log(doubled);`
+    },
+    {
+      id: 'edge-case-bleeding',
+      title: 'Edge Case: Bleeding',
+      description: 'Newest features (should score lower)',
+      language: 'js',
+      code: `// Very new features
+const arr = [1, 2, 3, 4, 5];
+const sorted = arr.toSorted();
+const last = arr.at(-1);
 
-// Location API
-const url = new URL(location.href);
-const params = url.searchParams;
+// Newer Object methods
+const grouped = Object.groupBy(arr, n => n % 2);
+const hasKey = Object.hasOwn({a: 1}, 'a');
 
-console.log({ perfEntry, uuid, online, lang });`
+// Latest Promise methods
+const results = await Promise.allSettled([
+  Promise.resolve(1),
+  Promise.reject(2)
+]);`
+    },
+    {
+      id: 'edge-case-mixed',
+      title: 'Edge Case: Mixed',
+      description: 'Mix of old and new (varied compatibility)',
+      language: 'css',
+      code: `/* Old widely supported */
+.box {
+  display: flex;
+  justify-content: center;
+}
+
+/* Newly available */
+.container:has(.item) {
+  padding: 1rem;
+}
+
+/* Limited availability */
+.text {
+  word-break: auto-phrase;
+}`
     }
   ];
 

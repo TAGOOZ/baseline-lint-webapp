@@ -1,4 +1,4 @@
-import { Github, Trophy } from "lucide-react";
+import { Github, Trophy, Linkedin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Footer() {
@@ -41,12 +41,47 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-border text-center">
-          <p className="text-xs text-muted-foreground font-mono" data-testid="text-copyright">
-            <span className="text-primary">&gt;</span> baseline-lint v1.0.6
-            <span className="mx-2">•</span>
-            Check browser compatibility instantly
-          </p>
+        <div className="mt-6 pt-6 border-t border-border">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap justify-center">
+              <Button variant="ghost" size="sm" asChild data-testid="button-profile-github">
+                <a 
+                  href="https://github.com/TAGOOZ" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  <Github className="w-4 h-4" />
+                  <span>@TAGOOZ</span>
+                </a>
+              </Button>
+              <Button variant="ghost" size="sm" asChild data-testid="button-profile-linkedin">
+                <a 
+                  href="https://www.linkedin.com/in/tagooz/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  <Linkedin className="w-4 h-4" />
+                  <span>LinkedIn</span>
+                </a>
+              </Button>
+              <Button variant="ghost" size="sm" asChild data-testid="button-profile-email">
+                <a 
+                  href="mailto:mostafatageldeen588@gmail.com"
+                  className="flex items-center gap-2"
+                >
+                  <Mail className="w-4 h-4" />
+                  <span>Email</span>
+                </a>
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground font-mono" data-testid="text-copyright">
+              <span className="text-primary">&gt;</span> baseline-lint v1.0.6
+              <span className="mx-2">•</span>
+              Check browser compatibility instantly
+            </p>
+          </div>
         </div>
       </div>
     </footer>

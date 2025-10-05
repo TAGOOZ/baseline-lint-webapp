@@ -29,9 +29,10 @@ interface ResultsPanelProps {
 export default function ResultsPanel({ score, issues, isVisible }: ResultsPanelProps) {
   if (!isVisible) return null;
 
-  const widelyAvailable = issues.filter(i => i.status === 'widely-available');
-  const newlyAvailable = issues.filter(i => i.status === 'newly-available');
-  const limited = issues.filter(i => i.status === 'limited');
+  const safeIssues = issues || [];
+  const widelyAvailable = safeIssues.filter(i => i.status === 'widely-available');
+  const newlyAvailable = safeIssues.filter(i => i.status === 'newly-available');
+  const limited = safeIssues.filter(i => i.status === 'limited');
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -110,7 +111,7 @@ export default function ResultsPanel({ score, issues, isVisible }: ResultsPanelP
 
         <div className="p-6">
           <Accordion type="single" collapsible className="w-full" data-testid="accordion-issues">
-            {issues.map((issue) => (
+            {safeIssues.map((issue) => (
               <AccordionItem key={issue.id} value={issue.id} className="border-border">
                 <AccordionTrigger className="hover:no-underline" data-testid={`accordion-trigger-${issue.id}`}>
                   <div className="flex items-center gap-3 text-left flex-1">
@@ -150,7 +151,7 @@ export default function ResultsPanel({ score, issues, isVisible }: ResultsPanelP
             ))}
           </Accordion>
 
-          {issues.length === 0 && (
+          {safeIssues.length === 0 && (
             <div className="text-center py-8" data-testid="text-no-issues">
               <CheckCircle2 className="w-12 h-12 mx-auto mb-3 text-primary" />
               <p className="text-muted-foreground font-mono">
