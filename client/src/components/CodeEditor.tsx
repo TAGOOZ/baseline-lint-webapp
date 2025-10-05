@@ -127,8 +127,8 @@ console.log({ last, doubled, sorted, results, grouped });`);
 
           <TabsContent value="css" className="m-0 p-0" data-testid="content-css">
             <Editor
-              height="300px"
-              className="sm:h-[400px]"
+              height="400px"
+              className="sm:h-[500px]"
               language="css"
               value={cssCode}
               onChange={(value) => setCssCode(value || "")}
@@ -141,14 +141,18 @@ console.log({ last, doubled, sorted, results, grouped });`);
                 automaticLayout: true,
                 tabSize: 2,
                 fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                scrollbar: {
+                  vertical: 'visible',
+                  horizontal: 'visible',
+                },
               }}
             />
           </TabsContent>
 
           <TabsContent value="js" className="m-0 p-0" data-testid="content-javascript">
             <Editor
-              height="300px"
-              className="sm:h-[400px]"
+              height="400px"
+              className="sm:h-[500px]"
               language="javascript"
               value={jsCode}
               onChange={(value) => setJsCode(value || "")}
@@ -161,6 +165,10 @@ console.log({ last, doubled, sorted, results, grouped });`);
                 automaticLayout: true,
                 tabSize: 2,
                 fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                scrollbar: {
+                  vertical: 'visible',
+                  horizontal: 'visible',
+                },
               }}
             />
           </TabsContent>

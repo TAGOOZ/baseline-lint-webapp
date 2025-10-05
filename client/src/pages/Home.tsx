@@ -74,7 +74,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground relative">
       <div 
         className="fixed inset-0 pointer-events-none opacity-[0.02]"
         style={{
