@@ -27,3 +27,5 @@ services:
         value: "https://your-app-name.onrender.com/auth/github/callback"
       - key: FRONTEND_URL
         value: "https://base-lint.netlify.app"
+      - key: GITHUB_PAT
+        value: "CHANGE_THIS_TO_YOUR_GITHUB_PAT"

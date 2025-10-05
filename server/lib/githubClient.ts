@@ -17,6 +17,14 @@ function log(message: string, source = "github") {
 let connectionSettings: any;
 
 async function getSystemAccessToken() {
+  // First, try to use the configured GitHub PAT for unauthenticated users
+  const githubPat = process.env.GITHUB_PAT;
+  if (githubPat) {
+    log('Using configured GitHub PAT for unauthenticated users', 'github');
+    return githubPat;
+  }
+
+  // Fallback to Replit connector (for backward compatibility)
   if (connectionSettings && connectionSettings.settings.expires_at && new Date(connectionSettings.settings.expires_at).getTime() > Date.now()) {
     return connectionSettings.settings.access_token;
   }
@@ -109,5 +117,10 @@ export async function getBestGitHubClient(userId?: number): Promise<Octokit> {
     return systemClient;
   }
   
-  throw new Error('No GitHub access available. Please authenticate with GitHub first.');
+  // If no GitHub access is available, throw a more helpful error
+  if (userId) {
+    throw new Error('No GitHub access available. Please authenticate with GitHub first.');
+  } else {
+    throw new Error('GitHub repository analysis requires authentication. Please login with GitHub to analyze repositories.');
+  }
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Github, LogOut, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { createApiUrl } from "@/config/api";
 
 interface User {
@@ -20,83 +21,22 @@ interface AuthState {
 }
 
 export default function AuthButton() {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    isAuthenticated: false,
-    isLoading: true
-  });
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const { toast } = useToast();
-
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
-    try {
-      const response = await fetch(createApiUrl('auth/status'), {
-        credentials: 'include'
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setAuthState({
-          user: data.user,
-          isAuthenticated: data.isAuthenticated,
-          isLoading: false
-        });
-      } else {
-        setAuthState({
-          user: null,
-          isAuthenticated: false,
-          isLoading: false
-        });
-      }
-    } catch (error) {
-      console.error('Auth status check failed:', error);
-      setAuthState({
-        user: null,
-        isAuthenticated: false,
-        isLoading: false
-      });
-    }
-  };
 
   const handleLogin = () => {
     window.location.href = createApiUrl('auth/github');
   };
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch(createApiUrl('auth/logout'), {
-        method: 'POST',
-        credentials: 'include'
-      });
-
-      if (response.ok) {
-        setAuthState({
-          user: null,
-          isAuthenticated: false,
-          isLoading: false
-        });
-        
-        toast({
-          title: "Logged out successfully",
-          description: "You have been logged out of your GitHub account.",
-        });
-      } else {
-        throw new Error('Logout failed');
-      }
-    } catch (error) {
-      console.error('Logout error:', error);
-      toast({
-        title: "Logout failed",
-        description: "There was an error logging out. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handleLogout = () => {
+    logout();
+    toast({
+      title: "Logged out successfully",
+      description: "You have been logged out of your GitHub account.",
+    });
   };
 
-  if (authState.isLoading) {
+  if (isLoading) {
     return (
       <Button variant="outline" disabled className="gap-2">
         <User className="w-4 h-4" />
@@ -105,16 +45,27 @@ export default function AuthButton() {
     );
   }
 
-  if (authState.isAuthenticated && authState.user) {
+  if (isAuthenticated && user) {
     return (
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <img 
-            src={authState.user.avatarUrl} 
-            alt={authState.user.displayName}
-            className="w-6 h-6 rounded-full"
-          />
-          <span className="hidden sm:inline">{authState.user.displayName}</span>
+          {user.avatarUrl ? (
+            <img 
+              src={user.avatarUrl} 
+              alt={user.displayName || user.username}
+              className="w-6 h-6 rounded-full"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          ) : (
+            <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                {user.username?.charAt(0).toUpperCase() || 'U'}
+              </span>
+            </div>
+          )}
+          <span className="hidden sm:inline">{user.displayName || user.username}</span>
         </div>
         <Button 
           variant="outline" 

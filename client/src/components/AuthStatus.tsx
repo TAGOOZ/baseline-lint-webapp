@@ -144,13 +144,24 @@ export default function AuthStatus() {
             <CheckCircle className="w-5 h-5 text-green-500" />
             <div>
               <div className="flex items-center gap-2">
-                <img
-                  src={authState.user.avatarUrl}
-                  alt={authState.user.displayName}
-                  className="w-6 h-6 rounded-full"
-                />
+                {authState.user.avatarUrl ? (
+                  <img
+                    src={authState.user.avatarUrl}
+                    alt={authState.user.displayName}
+                    className="w-6 h-6 rounded-full"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                      {authState.user.username?.charAt(0).toUpperCase() || 'U'}
+                    </span>
+                  </div>
+                )}
                 <span className="font-medium text-green-700 dark:text-green-400">
-                  {authState.user.displayName}
+                  {authState.user.displayName || authState.user.username}
                 </span>
               </div>
               <p className="text-xs text-green-600 dark:text-green-500 mt-1">
